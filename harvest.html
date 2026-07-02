@@ -17,8 +17,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         body { 
-            background: var(--bg); 
-            color: var(--text); 
+            background: var(--bg); color: var(--text); 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif; 
             margin: 0; padding: 4rem 1.5rem; 
             display: flex; flex-direction: column; align-items: center; 
@@ -34,6 +33,160 @@
         
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #121212; border: 1px solid #333; padding: 0.8rem 1.5rem;
+            color: var(--accent); font-size: 0.8rem; opacity: 0; pointer-events: none;
+            transition: var(--transition); z-index: 200; border-radius: 8px;
+        }
+        #toast.show { opacity: 1; }
+
+        .thought-card { padding: 2.5rem 0; border-bottom: 1px solid #1a1a1a; }
+        .text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--text); }
+        
+        .action-row { display: flex; gap: 1rem; align-items: center; }
+        .seed-count { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.1rem; margin-right: auto; }
+        
+        .btn { 
+            background: transparent; border: 1px solid #333; color: var(--text-muted); 
+            padding: 0.5rem 1rem; cursor: pointer; transition: var(--transition); 
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1rem; border-radius: 6px;
+        }
+        .btn:hover { border-color: var(--accent); color: var(--accent); }
+        
+        .lightbox { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 100; 
+            justify-content: center; align-items: center; opacity: 0; transition: var(--transition);
+        }
+        .lightbox.show { display: flex; opacity: 1; }
+        
+        .lightbox-content { 
+            background: var(--card); border: 1px solid #333; padding: 3rem; max-width: 400px; width: 85%; 
+            border-radius: 16px; transform: scale(0.95); transition: var(--transition);
+        }
+        .lightbox.show .lightbox-content { transform: scale(1); }
+        
+        .lightbox-content h2 { color: var(--accent); font-size: 0.8rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.2rem; }
+        .lightbox-content input { 
+            width: 100%; background: #000; border: 1px solid #333; color: #fff; 
+            padding: 1rem; font-family: inherit; box-sizing: border-box; outline: none; border-radius: 8px;
+        }
+        .lightbox-content input:focus { border-color: var(--accent); }
+        
+        .lightbox-close { margin-top: 1.5rem; cursor: pointer; color: #555; font-size: 0.8rem; transition: var(--transition); }
+        .lightbox-close:hover { color: #fff; }
+
+        nav { margin-top: 4rem; text-align: center; }
+        nav a { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1rem; transition: var(--transition); }
+        nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div id="toast"></div>
+    <div class="container">
+        <h1>HARVEST</h1>
+        <div id="feed">Cultivating the grove...</div>
+        <nav><a href="index.html">← Plant Seeds</a></nav>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <h2 id="modal-title">Your Reflection</h2>
+            <div id="response-list" style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;"></div>
+            <input type="text" id="lightbox-input" maxlength="120" placeholder="Write your thought...">
+            <button class="btn" style="width: 100%; margin-top: 1rem; border-color: var(--accent); color: var(--accent);" onclick="submitLightboxReply()">Sow Seed</button>
+            <div class="lightbox-close" style="text-align: center;" onclick="closeLightbox()">Close</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, where, doc, writeBatch, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyCNtb9aKUOLjJXH59mDnD6IQMYIxpAT3ss", authDomain: "no-ledge-tree.firebaseapp.com", projectId: "no-ledge-tree", storageBucket: "no-ledge-tree.firebasestorage.app", messagingSenderId: "633687715329", appId: "1:633687715329:web:c18aa11ccb64b7d43fda00" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let activeThoughtId = null;
+
+        window.showToast = (msg) => {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg; toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
+
+        async function loadHarvest() {
+            try {
+                const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"));
+                const snap = await getDocs(q);
+                const feed = document.getElementById('feed');
+                feed.innerHTML = "";
+                
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    const seedCount = data.reflectionCount || 0;
+                    
+                    const div = document.createElement('div');
+                    div.className = 'thought-card';
+                    div.innerHTML = `
+                        <div class="text">${data.thought}</div>
+                        <div class="action-row">
+                            <span class="seed-count">Seeds: ${seedCount}</span>
+                            <button class="btn" onclick="openLightbox('${id}', 'Reflect')">Reflect</button>
+                            <button class="btn" onclick="openLightbox('${id}', 'Dissent')">Dissent</button>
+                        </div>
+                    `;
+                    feed.appendChild(div);
+                });
+            } catch (e) { feed.innerText = "The grove is currently resting."; }
+        }
+
+        window.openLightbox = async (id, mode) => {
+            activeThoughtId = id;
+            const lightbox = document.getElementById('lightbox');
+            const list = document.getElementById('response-list');
+            document.getElementById('modal-title').innerText = mode === 'Dissent' ? 'Why does this fail?' : 'Your Reflection';
+            
+            lightbox.classList.add('show'); 
+            list.innerHTML = "Loading echoes..."; 
+            
+            const q = query(collection(db, "reflections"), where("thoughtId", "==", id), orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+            list.innerHTML = snap.empty ? "<p style='font-size: 0.8rem; color: #555;'>No seeds sown yet.</p>" : "";
+            snap.forEach(d => list.innerHTML += `<div style="margin-bottom: 0.8rem; color: #888; font-size: 0.9rem;">— ${d.data().text}</div>`);
+        };
+
+        window.closeLightbox = () => { document.getElementById('lightbox').classList.remove('show'); };
+
+        window.submitLightboxReply = async () => {
+            const input = document.getElementById('lightbox-input');
+            if(!input.value) return;
+            
+            try {
+                const batch = writeBatch(db);
+                // 1. Add the reflection
+                const ref = doc(collection(db, "reflections"));
+                batch.set(ref, { 
+                    thoughtId: activeThoughtId, 
+                    text: input.value, 
+                    timestamp: serverTimestamp() 
+                });
+                // 2. Increment seed count
+                batch.update(doc(db, "thoughts", activeThoughtId), { 
+                    reflectionCount: increment(1) 
+                });
+                
+                await batch.commit();
+                showToast("Seed sown.");
+                closeLightbox();
+                loadHarvest();
+            } catch(e) { showToast("Could not sow seed."); }
+        };
+
+        loadHarvest();
+    </script>
+</body>
+</html>
             background: #121212; border: 1px solid #333; padding: 0.8rem 1.5rem;
             color: var(--accent); font-size: 0.8rem; opacity: 0; pointer-events: none;
             transition: var(--transition); z-index: 200; border-radius: 8px;
