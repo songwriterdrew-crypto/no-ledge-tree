@@ -157,80 +157,12 @@
       <div class="lightbox-content">
           <h2>Offering</h2>
           <textarea id="feedback-input" rows="3" maxlength="300" placeholder="How might this grove grow?"></textarea>
-          <button onclick="submitFeedback()" style="margin-top: 2rem;">Send</button>
-          <div class="lightbox-close" onclick="closeFeedback()">Return</div>
+          <button id="submit-feedback-btn" style="margin-top: 2rem;">Send</button>
+          <div class="lightbox-close" id="close-feedback-btn">Return</div>
       </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy, limit, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <script type="module" src="js/script.js"></script>
 
-    const firebaseConfig = { apiKey: "AIzaSyCNtb9aKUOLjJXH59mDnD6IQMYIxpAT3ss", authDomain: "no-ledge-tree.firebaseapp.com", projectId: "no-ledge-tree", storageBucket: "no-ledge-tree.firebasestorage.app", messagingSenderId: "633687715329", appId: "1:633687715329:web:c18aa11ccb64b7d43fda00" };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const toast = document.getElementById('toast');
-    window.showToast = (msg) => { toast.innerText = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); };
-
-    document.getElementById('feedback-trigger').addEventListener('click', () => document.getElementById('feedback-lightbox').classList.add('show'));
-    window.closeFeedback = () => document.getElementById('feedback-lightbox').classList.remove('show');
-    
-    window.submitFeedback = async () => {
-        const input = document.getElementById('feedback-input');
-        if(!input.value) return;
-        try {
-            await addDoc(collection(db, "feedback"), { text: input.value, timestamp: serverTimestamp() });
-            showToast("Received.");
-            input.value = "";
-            closeFeedback();
-        } catch (e) { showToast("Error."); }
-    };
-
-    const prompts = ["What is a belief you are ready to let go of?", "What did you unlearn today?", "What space are you making for new growth?", "If you knew nothing, what would you choose to believe?", "What truth have you outgrown?"];
-    document.getElementById('prompt-display').innerText = prompts[Math.floor(Math.random() * prompts.length)];
-
-    async function updateStatus() {
-        try {
-            const snap = await getCountFromServer(collection(db, "thoughts"));
-            const count = snap.data().count;
-            document.getElementById('grove-status').innerHTML = `<a href="harvest.html">The Grove holds ${count} seeds.</a>`;
-        } catch (e) { console.error("Error updating status:", e); }
-    }
-
-    const branchNodes = [[30, 60], [70, 60], [50, 50], [40, 75], [60, 75], [35, 80], [65, 80], [45, 65], [55, 65]];
-    async function growFruit() {
-      const container = document.getElementById('fruit-container');
-      container.innerHTML = ""; 
-      const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"), limit(branchNodes.length));
-      const snap = await getDocs(q);
-      let i = 0;
-      snap.forEach(() => {
-        const fruit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        const [cx, cy] = branchNodes[i % branchNodes.length];
-        const fruitColor = i % 2 === 0 ? "var(--accent)" : "var(--accent-alt)";
-        fruit.setAttribute("cx", cx); fruit.setAttribute("cy", cy); fruit.setAttribute("r", "3.5"); 
-        fruit.setAttribute("fill", fruitColor); fruit.setAttribute("class", "fruit-node");
-        container.appendChild(fruit);
-        setTimeout(() => fruit.classList.add("show"), i * 100);
-        i++;
-      });
-    }
-
-    document.getElementById('plant-btn').addEventListener('click', async () => {
-      const val = document.getElementById('seed-input').value;
-      if (!val) return;
-      try {
-        await addDoc(collection(db, "thoughts"), { thought: val, timestamp: serverTimestamp(), type: "thought", reflectionCount: 0 });
-        document.getElementById('seed-input').value = "";
-        growFruit();
-        updateStatus();
-        showToast("Seed sown.");
-      } catch (e) { showToast("Unable to sow."); }
-    });
-
-    growFruit();
-    updateStatus();
-  </script>
 </body>
 </html>
