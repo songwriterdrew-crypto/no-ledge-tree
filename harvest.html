@@ -29,65 +29,31 @@
         }
 
         .container { max-width: 400px; width: 100%; z-index: 1; }
-        
         h1 { font-weight: 300; font-size: 2.5rem; letter-spacing: 0.8rem; color: var(--accent); margin-bottom: 0.5rem; text-align: center; text-transform: uppercase; }
         .subtitle { font-size: 0.5rem; color: var(--seed-green); letter-spacing: 0.5rem; margin-bottom: 4rem; text-align: center; text-transform: uppercase; opacity: 0.6; }
-
-        .mantra { 
-            color: var(--text-muted); font-style: italic; font-size: 0.8rem; 
-            margin-bottom: 5rem; text-align: center; line-height: 1.8; opacity: 0.7;
-        }
-
+        .mantra { color: var(--text-muted); font-style: italic; font-size: 0.8rem; margin-bottom: 5rem; text-align: center; line-height: 1.8; opacity: 0.7; }
         .thought-card { padding: 4rem 0; border-bottom: 1px solid #111; }
-        
         .seed-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
         .seed-dot { width: 6px; height: 6px; background: var(--seed-green); border-radius: 50%; }
-        
-        /* Seed Counter Styles */
         .seed-count-text { font-size: 0.7rem; color: var(--seed-green); letter-spacing: 0.3rem; text-transform: uppercase; }
         .seed-number { color: #fff; font-weight: 500; }
-
-        .text { 
-            font-family: 'Playfair Display', serif; 
-            font-size: 1.5rem; 
-            line-height: 1.6; 
-            margin-bottom: 2rem; 
-            font-weight: 400; 
-            color: #ccc; 
-            letter-spacing: 0.01rem;
-        }
-        
+        .text { font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 1.6; margin-bottom: 2rem; font-weight: 400; color: #ccc; letter-spacing: 0.01rem; }
         .action-row { display: flex; gap: 2rem; align-items: center; }
-        
         .btn { background: transparent; border: 1px solid #222; color: var(--text-muted); padding: 0.4rem 1rem; cursor: pointer; transition: all 0.8s var(--ease); font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.2rem; }
         .btn:hover { border-color: var(--seed-green); color: var(--seed-green); }
-        
-        .btn-view { 
-            border-color: var(--seed-green); 
-            color: var(--seed-green); 
-            animation: pulse-view 3s infinite ease-in-out; 
-        }
-        
-        @keyframes pulse-view {
-            0%, 100% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
-        }
-        
+        .btn-view { border-color: var(--seed-green); color: var(--seed-green); animation: pulse-view 3s infinite ease-in-out; }
+        @keyframes pulse-view { 0%, 100% { opacity: 0.7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.02); } }
         .accordion { max-height: 0; overflow: hidden; transition: max-height 0.8s var(--ease); border-top: 0px solid #111; }
         .accordion.open { max-height: 1000px; padding-top: 2rem; margin-top: 1rem; border-top: 1px solid #1a1a1a; }
-        
         .echo-item { padding: 16px; margin-bottom: 12px; font-size: 0.85rem; line-height: 1.6; border-left: 2px solid; background: #060606; font-style: italic; }
         .echo-reflection { border-left-color: var(--echo-blue); color: var(--echo-blue); }
         .echo-challenge { border-left-color: var(--dissolve-red); color: var(--dissolve-red); }
-
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #111; padding: 0.8rem 1.5rem; color: #fff; font-size: 0.6rem; opacity: 0; pointer-events: none; transition: 0.8s var(--ease); border: 1px solid #222; letter-spacing: 0.1rem; text-transform: uppercase; z-index: 3000; }
         #toast.show { opacity: 1; }
-        
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); z-index: 2000; display: none; justify-content: center; align-items: center; opacity: 0; transform: scale(0.98); transition: var(--ease); }
         .lightbox.show { display: flex; opacity: 1; transform: scale(1); }
         .lightbox-content { text-align: center; width: 85%; max-width: 350px; }
         .lightbox-content h2 { color: #555; font-size: 0.5rem; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 0.3rem; font-weight: 300; }
-        
         #lightbox-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; color: #fff; padding: 1rem 0; font-family: "Georgia", serif; font-size: 1rem; text-align: center; outline: none; margin-bottom: 2rem; transition: var(--ease); }
         #lightbox-input:focus { border-bottom: 1px solid #555; }
         .lightbox-close { margin-top: 3rem; cursor: pointer; color: #333; font-size: 0.5rem; letter-spacing: 0.2rem; text-transform: uppercase; transition: var(--ease); }
@@ -100,10 +66,7 @@
     <div class="container">
         <h1>HARVEST</h1>
         <p class="subtitle">The Grove</p>
-        
-        <div class="mantra">
-            To unlearn is not to lose. It is to make space for what is true.
-        </div>
+        <div class="mantra">To unlearn is not to lose. It is to make space for what is true.</div>
 
         <div id="feed">Cultivating...</div>
         
@@ -116,144 +79,11 @@
         <div class="lightbox-content">
             <h2 id="modal-title">Action</h2>
             <input type="text" id="lightbox-input" maxlength="120" placeholder="...">
-            <button id="sow-btn" class="btn" style="width: 100%; color: var(--text-muted);" onclick="submitLightboxReply()">Sow</button>
-            <div class="lightbox-close" onclick="closeLightbox()">Return</div>
+            <button id="sow-btn" class="btn" style="width: 100%; color: var(--text-muted);">Sow</button>
+            <div class="lightbox-close" id="close-lightbox-btn">Return</div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, where, doc, writeBatch, increment, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = { apiKey: "AIzaSyCNtb9aKUOLjJXH59mDnD6IQMYIxpAT3ss", authDomain: "no-ledge-tree.firebaseapp.com", projectId: "no-ledge-tree", storageBucket: "no-ledge-tree.firebasestorage.app", messagingSenderId: "633687715329", appId: "1:633687715329:web:c18aa11ccb64b7d43fda00" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let activethoughtId = null;
-        let activeMode = null;
-
-        window.showToast = (msg) => {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg; toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        };
-
-        async function loadHarvest() {
-            const feed = document.getElementById('feed');
-            try {
-                const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"), limit(20));
-                const snap = await getDocs(q);
-                feed.innerHTML = "";
-                
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    const id = doc.id;
-                    const seedCount = data.reflectionCount || 0;
-                    
-                    const div = document.createElement('div');
-                    div.className = 'thought-card';
-                    div.innerHTML = `
-                        <div class="seed-header">
-                            <div class="seed-dot"></div>
-                            <span class="seed-count-text">
-                                <span class="seed-number" id="count-${id}">${seedCount}</span> ${seedCount === 1 ? 'seed' : 'seeds'}
-                            </span>
-                        </div>
-                        <div class="text">${data.thought}</div>
-                        <div class="action-row">
-                            <button class="btn btn-view" onclick="toggleAccordion('${id}')">View seeds</button>
-                            <button class="btn" onclick="openLightbox('${id}', 'Echo')">Echo</button>
-                            <button class="btn" onclick="openLightbox('${id}', 'Dissolve')">Dissolve</button>
-                        </div>
-                        <div id="acc-${id}" class="accordion"></div>
-                    `;
-                    feed.appendChild(div);
-                });
-            } catch (e) { 
-                console.error(e); 
-                feed.innerText = "The grove is resting.";
-            }
-        }
-
-        window.toggleAccordion = async (id) => {
-            const acc = document.getElementById(`acc-${id}`);
-            if (acc.classList.contains('open')) { 
-                acc.classList.remove('open'); 
-                return; 
-            }
-            acc.classList.add('open');
-            if (acc.innerHTML !== "") return; 
-            
-            acc.innerHTML = "<div style='color:#333; font-size:0.7rem;'>Unfolding...</div>";
-            const q = query(collection(db, "reflections"), where("thoughtId", "==", id), orderBy("timestamp", "desc"));
-            const snap = await getDocs(q);
-            
-            acc.innerHTML = snap.empty ? "<p style='color:#333; font-size:0.7rem;'>No seeds sown here yet.</p>" : "";
-            snap.forEach(d => {
-                const data = d.data();
-                const type = data.type || 'reflection';
-                const colorClass = type === 'challenge' ? 'echo-challenge' : 'echo-reflection';
-                acc.innerHTML += `<div class="echo-item ${colorClass}">${data.text}</div>`;
-            });
-        };
-
-        window.openLightbox = (id, mode) => {
-            activethoughtId = id; activeMode = mode;
-            document.getElementById('modal-title').innerText = mode === 'Echo' ? "Hold a Mirror" : "Dissolve the Ledge";
-            document.getElementById('lightbox').classList.add('show'); 
-            setTimeout(() => document.getElementById('lightbox-input').focus(), 100);
-        };
-
-        window.closeLightbox = () => document.getElementById('lightbox').classList.remove('show');
-
-        window.submitLightboxReply = async () => {
-            const input = document.getElementById('lightbox-input');
-            const submitBtn = document.getElementById('sow-btn');
-            if(!input.value) return;
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Sowing...";
-            
-            // Target the number span
-            const countEl = document.getElementById(`count-${activethoughtId}`);
-            let current = parseInt(countEl.innerText);
-            
-            // Update the number text content
-            countEl.innerText = current + 1;
-            // Update the label text sibling
-            countEl.nextSibling.textContent = (current + 1 === 1 ? ' seed' : ' seeds');
-
-            try {
-                const batch = writeBatch(db);
-                const ref = doc(collection(db, "reflections"));
-                batch.set(ref, { 
-                    thoughtId: activethoughtId, text: input.value, 
-                    timestamp: serverTimestamp(), type: activeMode === 'Dissolve' ? 'challenge' : 'reflection'
-                });
-                batch.update(doc(db, "thoughts", activethoughtId), { reflectionCount: increment(1) });
-                await batch.commit();
-                
-                const acc = document.getElementById(`acc-${activethoughtId}`);
-                if(acc.classList.contains('open')) {
-                    const item = document.createElement('div');
-                    item.className = `echo-item ${activeMode === 'Dissolve' ? 'echo-challenge' : 'echo-reflection'}`;
-                    item.innerText = input.value;
-                    acc.prepend(item);
-                }
-
-                showToast("Sown."); 
-                input.value = ""; 
-                closeLightbox();
-            } catch(e) { 
-                showToast("Error. Refreshing..."); 
-                loadHarvest(); 
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Sow";
-            }
-        };
-
-        loadHarvest();
-    </script>
+    <script type="module" src="js/harvest.js"></script>
 </body>
 </html>
