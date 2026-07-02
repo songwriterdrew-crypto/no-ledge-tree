@@ -2,86 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A space for unlearning. Sow a thought, watch it dissolve.">
-  <meta property="og:title" content="No-Ledge Tree">
-  <meta property="og:description" content="A digital sanctuary for thoughts that need to be released.">
-  <link rel="icon" href="path-to-your-icon.png">
-  <title>The Architecture of Unlearning | No-Ledge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="Favicon.png">
+  <title>About | No-Ledge Tree</title>
   
   <style>
     :root {
-        --bg: #0a0a0a;
-        --card: #141414;
-        --accent: #81c784;
-        --text: #f0f0f0;
-        --text-muted: #888;
-        --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        --bg: #030303;
+        --card: #050505;
+        --accent: #00ff00; 
+        --accent-alt: #ff0000; 
+        --text: #e0e0e0;
+        --text-muted: #555;
+        --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
+      font-family: "EB Garamond", serif;
       padding: 4rem 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.8;
-      animation: fadeIn 1.2s ease-in;
+      margin: 0;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
     }
 
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
-        opacity: 0.15;
-        pointer-events: none;
-        z-index: -1;
-    }
+    .container { max-width: 500px; text-align: left; }
 
     h1 {
-      color: #fff;
-      font-size: 2rem;
+      color: var(--text);
+      font-size: 1.2rem;
       font-weight: 300;
-      letter-spacing: 0.2rem;
-      margin-bottom: 3rem;
+      letter-spacing: 0.6rem;
+      margin-bottom: 4rem;
+      text-align: center;
       text-transform: uppercase;
     }
 
-    p { margin-bottom: 2rem; font-size: 1.05rem; font-weight: 300; color: #ccc; }
-    strong { color: var(--text); font-weight: 500; }
+    p { margin-bottom: 2rem; font-size: 1rem; font-weight: 300; color: var(--text-muted); line-height: 1.8; }
+    strong { color: var(--text); font-weight: 400; }
 
     .highlight {
       padding: 2rem;
       margin: 3rem 0;
-      border-left: 2px solid var(--accent);
-      background-color: var(--card);
-      color: #fff;
-      border-radius: 0 8px 8px 0;
+      border-left: 1px solid #222;
+      color: var(--text);
       font-style: italic;
+      font-size: 1rem;
       transition: var(--transition);
     }
     
-    .highlight:hover { background-color: #1a1a1a; transform: translateX(5px); }
-
-    nav { margin-top: 4rem; }
+    nav { margin-top: 4rem; text-align: center; }
     nav a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.75rem;
+      font-size: 0.5rem;
       text-transform: uppercase;
-      letter-spacing: 0.1rem;
+      letter-spacing: 0.3rem;
       transition: var(--transition);
     }
     nav a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
-  <article>
-    <h1>The Architecture of Unlearning</h1>
+  <div class="container">
+    <h1>Architecture</h1>
     
     <p>We are built on a simple, dangerous premise: the world is not suffering from a lack of information, but from a surplus of false certainty. We are taught to gather, to hoard, to cling—but growth requires the capacity to let go.</p>
 
@@ -89,15 +77,15 @@
 
     <p>Our engagement in the Grove is defined by three distinct movements of inquiry:</p>
 
-    <p><strong>Mirroring (View):</strong> To observe the thought without judgment, acknowledging its presence in the mind.<br>
-    <strong>Echoing (Reflect):</strong> To reflect back the core assumption, allowing the thinker to hear the implication of their own ledge.<br>
-    <strong>Dissolving (Challenge):</strong> To ask a question that introduces enough friction to loosen the grip of the belief.</p>
+    <p><strong>Mirroring:</strong> To observe the thought without judgment, acknowledging its presence in the mind.<br>
+    <strong>Echoing:</strong> To reflect back the core assumption, allowing the thinker to hear the implication of their own ledge.<br>
+    <strong>Dissolving:</strong> To ask a question that introduces enough friction to loosen the grip of the belief.</p>
 
     <p class="highlight">This is a space to shed, not to collect. We are not here to win an argument; we are here to dissolve the walls that keep us from reality.</p>
 
     <nav>
-      <a href="index.html">← Return to the Forest</a>
+      <a href="index.html">← Return to the Grove</a>
     </nav>
-  </article>
+  </div>
 </body>
 </html>
