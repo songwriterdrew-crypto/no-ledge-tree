@@ -41,7 +41,6 @@
     .tagline { 
         color: var(--text-muted); letter-spacing: 0.2rem; font-size: 0.7rem; 
         margin: 0 0 3rem 0; text-transform: uppercase;
-        position: relative; z-index: 1;
     }
     
     #prompt-display { font-style: italic; color: var(--text-muted); margin: 0 auto 2rem auto; min-height: 3rem; max-width: 450px; line-height: 1.6; }
@@ -60,7 +59,9 @@
     }
     button:hover { background: var(--accent); color: var(--bg); }
     
-    #grove-status { color: #555; font-size: 0.7rem; margin: 3rem 0 0 0; letter-spacing: 0.1rem; text-transform: uppercase; }
+    #grove-status { color: #555; font-size: 0.7rem; margin: 3rem 0 0 0; letter-spacing: 0.1rem; text-transform: uppercase; cursor: pointer; }
+    #grove-status a { color: #555; text-decoration: none; transition: var(--transition); }
+    #grove-status a:hover { color: var(--accent); }
 
     nav { margin-top: 4rem; display: flex; gap: 2rem; justify-content: center; }
     nav a { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1rem; transition: var(--transition); cursor: pointer; }
@@ -119,7 +120,8 @@
   <br>
   <button id="plant-btn">Plant Seed</button>
   
-  <p id="grove-status">Cultivating the grove...</p>
+  <!-- Updated this line -->
+  <p id="grove-status"><a href="harvest.html">Cultivating the grove...</a></p>
 
   <nav>
     <a href="about.html">About</a> 
@@ -180,7 +182,8 @@
         try {
             const snap = await getCountFromServer(collection(db, "thoughts"));
             const count = snap.data().count;
-            document.getElementById('grove-status').innerText = `The grove is currently holding ${count} seeds.`;
+            // Update the text inside the link
+            document.getElementById('grove-status').innerHTML = `<a href="harvest.html">The grove is currently holding ${count} seeds.</a>`;
         } catch (e) { console.error("Error updating status:", e); }
     }
 
