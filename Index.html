@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No-Ledge Tree</title>
+  <link rel="icon" type="image/png" href="1782936698284.png">
+  <style>
+    :root {
+        --bg: #0a0a0a;
+        --card: #141414;
+        --accent: #81c784;
+        --accent-alt: #e57373;
+        --text: #f0f0f0;
+        --text-muted: #888;
+        --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body { 
+        background: var(--bg);
+        color: var(--text); 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif; 
+        text-align: center; 
+        padding: 2rem 1.5rem 4rem 1.5rem; 
+        margin: 0; 
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: fadeIn 1.2s ease-in;
+    }
+
+    .tree-container { margin: 0.5rem auto 1.5rem auto; width: 140px; }
+    .logo-tree { width: 100%; height: auto; stroke: #333; }
+
+    h1 { 
+        font-size: 1.8rem; font-weight: 300; letter-spacing: 0.3rem; 
+        margin: 0 0 0.5rem 0; text-transform: uppercase; 
+    }
+
+    .tagline { 
+        color: var(--text-muted); letter-spacing: 0.2rem; font-size: 0.7rem; 
+        margin: 0 0 3rem 0; text-transform: uppercase;
+        position: relative; z-index: 1;
+    }
+    
+    #prompt-display { font-style: italic; color: var(--text-muted); margin: 0 auto 2rem auto; min-height: 3rem; max-width: 450px; line-height: 1.6; }
+    
+    #seed-input { 
+        background: var(--card); border: 1px solid #333; 
+        color: white; width: 100%; max-width: 400px; padding: 1.2rem; text-align: center; font-size: 1rem; 
+        border-radius: 8px; transition: var(--transition); outline: none; box-sizing: border-box;
+    }
+    #seed-input:focus { border-color: var(--accent); background: #1a1a1a; }
+
+    button { 
+        background: transparent; border: 1px solid var(--accent); color: var(--accent); 
+        padding: 1rem 2.5rem; margin-top: 1.5rem; cursor: pointer; border-radius: 8px;
+        transition: var(--transition); text-transform: uppercase; letter-spacing: 0.1rem; font-size: 0.8rem;
+    }
+    button:hover { background: var(--accent); color: var(--bg); }
+    
+    #grove-status { color: #555; font-size: 0.7rem; margin: 3rem 0 0 0; letter-spacing: 0.1rem; text-transform: uppercase; }
+
+    nav { margin-top: 4rem; display: flex; gap: 2rem; justify-content: center; }
+    nav a { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1rem; transition: var(--transition); cursor: pointer; }
+    nav a:hover { color: var(--accent); }
+    
+    #toast {
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: var(--card); border: 1px solid #333; padding: 0.8rem 1.5rem;
+        color: var(--accent); font-size: 0.8rem; opacity: 0; pointer-events: none;
+        transition: var(--transition); z-index: 200; border-radius: 8px;
+    }
+    #toast.show { opacity: 1; }
+
+    .lightbox { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 100; 
+        display: flex; justify-content: center; align-items: center; 
+        opacity: 0; pointer-events: none; transition: var(--transition);
+    }
+    .lightbox.show { opacity: 1; pointer-events: auto; }
+    
+    .lightbox-content { 
+        background: var(--card); border: 1px solid #333; padding: 3rem; max-width: 400px; width: 85%; 
+        border-radius: 16px; transform: scale(0.95); transition: var(--transition);
+    }
+    .lightbox.show .lightbox-content { transform: scale(1); }
+    
+    .lightbox-content h2 { color: var(--accent); font-size: 0.8rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.2rem; }
+    .lightbox-close { margin-top: 1.5rem; cursor: pointer; color: #555; font-size: 0.8rem; transition: var(--transition); }
+    .lightbox-close:hover { color: #fff; }
+
+    /* Animation Styles */
+    @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.15); opacity: 1; } }
+    @keyframes fall { 
+        0% { transform: translateY(0); opacity: 1; } 
+        100% { transform: translateY(100px); opacity: 0; } 
+    }
+    
+    .fruit-node { transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: center; animation: breathe 6s ease-in-out infinite; }
+    .fruit-node.show { transform: scale(1); }
+    .fruit-node.fall { animation: fall 1.5s ease-in-out forwards; }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div id="toast"></div>
+
+  <div class="tree-container">
+    <svg id="tree-svg" viewBox="0 0 100 150" class="logo-tree">
+      <path d="M50 150 L50 90 M50 90 L30 60 M50 90 L70 60 M50 90 L50 50" stroke="currentColor" stroke-width="2" fill="none" />
+      <g id="fruit-container"></g>
+    </svg>
+  </div>
+  
+  <h1>NO-LEDGE-TREE</h1>
+  <div class="tagline">A SPACE FOR UNLEARNING</div>
+  
+  <div id="prompt-display">Loading reflection...</div>
+  <input type="text" id="seed-input" placeholder="Plant a thought...">
+  <br>
+  <button id="plant-btn">Plant Seed</button>
+  
+  <p id="grove-status">Cultivating the grove...</p>
+
+  <nav>
+    <a href="about.html">About</a> 
+    <a href="harvest.html">Harvest</a> 
+    <a href="rules.html">Rules</a> 
+    <a id="feedback-trigger">Feedback</a>
+  </nav>
+
+  <div class="lightbox" id="feedback-lightbox">
+      <div class="lightbox-content">
+          <h2>Offer Feedback</h2>
+          <textarea id="feedback-input" rows="4" maxlength="300" placeholder="How can we evolve?..." style="width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 1rem; font-family: inherit; border-radius: 8px; margin-bottom: 1rem; box-sizing: border-box; outline: none;"></textarea>
+          <button onclick="submitFeedback()" style="width: 100%; margin-top:0;">Send</button>
+          <div class="lightbox-close" onclick="closeFeedback()">Close</div>
+      </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy, limit, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = { apiKey: "AIzaSyCNtb9aKUOLjJXH59mDnD6IQMYIxpAT3ss", authDomain: "no-ledge-tree.firebaseapp.com", projectId: "no-ledge-tree", storageBucket: "no-ledge-tree.firebasestorage.app", messagingSenderId: "633687715329", appId: "1:633687715329:web:c18aa11ccb64b7d43fda00" };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const toast = document.getElementById('toast');
+    window.showToast = (message) => {
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    const feedbackLightbox = document.getElementById('feedback-lightbox');
+    document.getElementById('feedback-trigger').addEventListener('click', (e) => {
+        e.preventDefault();
+        feedbackLightbox.classList.add('show');
+    });
+
+    window.closeFeedback = () => {
+        feedbackLightbox.classList.remove('show');
+        document.getElementById('feedback-input').value = "";
+    };
+
+    window.submitFeedback = async () => {
+        const input = document.getElementById('feedback-input');
+        if(!input.value) return;
+        try {
+            await addDoc(collection(db, "feedback"), { text: input.value, timestamp: serverTimestamp(), type: "feedback" });
+            showToast("Reflection received.");
+            closeFeedback();
+        } catch (e) { showToast("Couldn't send feedback."); }
+    };
+
+    const prompts = ["What is a belief you are ready to let go of?", "What did you unlearn today?", "What space are you making for new growth?", "If you knew nothing, what would you choose to believe?", "What truth have you outgrown?"];
+    document.getElementById('prompt-display').innerText = prompts[Math.floor(Math.random() * prompts.length)];
+
+    async function updateStatus() {
+        try {
+            const snap = await getCountFromServer(collection(db, "thoughts"));
+            const count = snap.data().count;
+            document.getElementById('grove-status').innerText = `The grove is currently holding ${count} seeds.`;
+        } catch (e) { console.error("Error updating status:", e); }
+    }
+
+    // Increased fruit positions for a fuller tree
+    const branchNodes = [[30, 60], [70, 60], [50, 50], [40, 75], [60, 75], [35, 80], [65, 80], [45, 65], [55, 65]];
+    
+    async function growFruit() {
+      const container = document.getElementById('fruit-container');
+      const oldFruits = container.querySelectorAll('.fruit-node');
+      
+      if (oldFruits.length > 0) {
+          const lastFruit = oldFruits[oldFruits.length - 1];
+          lastFruit.classList.add('fall');
+          await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+
+      container.innerHTML = ""; 
+      const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"), limit(branchNodes.length));
+      const snap = await getDocs(q);
+      let i = 0;
+      snap.forEach(() => {
+        const fruit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        const [cx, cy] = branchNodes[i % branchNodes.length];
+        const fruitColor = i % 2 === 0 ? "#81c784" : "#e57373";
+        
+        fruit.setAttribute("cx", cx); 
+        fruit.setAttribute("cy", cy); 
+        fruit.setAttribute("r", "3.5"); // Slightly larger for visibility
+        fruit.setAttribute("fill", fruitColor); 
+        fruit.setAttribute("class", "fruit-node");
+        
+        container.appendChild(fruit);
+        setTimeout(() => fruit.classList.add("show"), i * 100);
+        i++;
+      });
+    }
+
+    document.getElementById('plant-btn').addEventListener('click', async () => {
+      const val = document.getElementById('seed-input').value;
+      if (!val) return;
+      try {
+        await addDoc(collection(db, "thoughts"), { 
+            thought: val, 
+            timestamp: serverTimestamp(), 
+            type: "thought",
+            votesUp: 0,
+            votesDown: 0 
+        });
+        document.getElementById('seed-input').value = "";
+        growFruit();
+        updateStatus();
+        showToast("Thought planted.");
+      } catch (e) { showToast("Unable to plant."); }
+    });
+
+    growFruit();
+    updateStatus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harvest | No-Ledge Tree</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #141414;
+            --accent: #81c784;
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif; 
+            margin: 0; padding: 4rem 1.5rem; 
+            display: flex; flex-direction: column; align-items: center; 
+            animation: fadeIn 1.2s ease-in; 
+        }
+
+        .container { max-width: 500px; width: 100%; }
+        
+        h1 { 
+            font-weight: 300; font-size: 1.5rem; letter-spacing: 0.3rem; 
+            color: var(--text); margin-bottom: 4rem; text-align: center; text-transform: uppercase;
+        }
+        
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #121212; border: 1px solid #333; padding: 0.8rem 1.5rem;
+            color: var(--accent); font-size: 0.8rem; opacity: 0; pointer-events: none;
+            transition: var(--transition); z-index: 200; border-radius: 8px;
+        }
+        #toast.show { opacity: 1; }
+
+        .thought-card { padding: 2.5rem 0; border-bottom: 1px solid #1a1a1a; }
+        
+        .text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--text); }
+        
+        .vote-row { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+        .vote-btn, .reply-btn { 
+            background: transparent; border: 1px solid #333; color: var(--text-muted); 
+            padding: 0.5rem 1rem; cursor: pointer; transition: var(--transition); 
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1rem; border-radius: 6px;
+        }
+        .vote-btn:hover:not(:disabled), .reply-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .vote-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .lightbox { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 100; 
+            justify-content: center; align-items: center; opacity: 0; transition: var(--transition);
+        }
+        .lightbox.show { display: flex; opacity: 1; }
+        
+        .lightbox-content { 
+            background: var(--card); border: 1px solid #333; padding: 3rem; max-width: 400px; width: 85%; 
+            border-radius: 16px; transform: scale(0.95); transition: var(--transition);
+        }
+        .lightbox.show .lightbox-content { transform: scale(1); }
+        
+        .lightbox-content h2 { color: var(--accent); font-size: 0.8rem; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.2rem; }
+        .lightbox-content input { 
+            width: 100%; background: #000; border: 1px solid #333; color: #fff; 
+            padding: 1rem; font-family: inherit; box-sizing: border-box; outline: none; border-radius: 8px;
+        }
+        .lightbox-content input:focus { border-color: var(--accent); }
+        
+        .lightbox-close { margin-top: 1.5rem; cursor: pointer; color: #555; font-size: 0.8rem; transition: var(--transition); }
+        .lightbox-close:hover { color: #fff; }
+
+        .count { font-weight: 600; margin-left: 0.5rem; }
+        nav { margin-top: 4rem; text-align: center; }
+        nav a { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1rem; transition: var(--transition); }
+        nav a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div id="toast"></div>
+    <div class="container">
+        <h1>HARVEST</h1>
+        <div id="feed">Cultivating the grove...</div>
+        <nav><a href="index.html">← Plant Seeds</a></nav>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <h2>Your Reflection</h2>
+            <div id="response-list" style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;"></div>
+            <input type="text" id="lightbox-input" maxlength="120" placeholder="Write your truth...">
+            <button class="reply-btn" style="width: 100%; margin-top: 1rem; border-color: var(--accent); color: var(--accent);" onclick="submitLightboxReply()">Submit</button>
+            <div class="lightbox-close" style="text-align: center;" onclick="closeLightbox()">Close</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, where, limit, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyCNtb9aKUOLjJXH59mDnD6IQMYIxpAT3ss", authDomain: "no-ledge-tree.firebaseapp.com", projectId: "no-ledge-tree", storageBucket: "no-ledge-tree.firebasestorage.app", messagingSenderId: "633687715329", appId: "1:633687715329:web:c18aa11ccb64b7d43fda00" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const toast = document.getElementById('toast');
+        window.showToast = (msg) => {
+            toast.innerText = msg; toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
+
+        let activeThoughtId = null;
+
+        async function loadHarvest() {
+            try {
+                const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"), limit(50));
+                const thoughtsSnap = await getDocs(q);
+                
+                const feed = document.getElementById('feed');
+                feed.innerHTML = "";
+                
+                if (thoughtsSnap.empty) {
+                    feed.innerHTML = "<p style='text-align:center; color:#555;'>The grove is silent. Plant the first seed.</p>";
+                    return;
+                }
+
+                thoughtsSnap.forEach(doc => {
+                    const data = doc.data();
+                    // Fallback to 0 if fields don't exist yet (for older seeds)
+                    const upCount = data.votesUp || 0;
+                    const downCount = data.votesDown || 0;
+                    
+                    const id = doc.id, hasVoted = localStorage.getItem(`voted_${id}`);
+                    const div = document.createElement('div');
+                    div.className = 'thought-card';
+                    div.innerHTML = `
+                        <div class="text">${data.thought}</div>
+                        <div class="vote-row" id="row-${id}">
+                            <button class="vote-btn" id="up-btn-${id}" ${hasVoted ? 'disabled' : ''}>
+                                Truth <span id="count-up-${id}" class="count">${upCount}</span>
+                            </button>
+                            <button class="vote-btn" id="down-btn-${id}" ${hasVoted ? 'disabled' : ''}>
+                                Lie <span id="count-down-${id}" class="count">${downCount}</span>
+                            </button>
+                            <button class="reply-btn" onclick="openLightbox('${id}')">Comment</button>
+                        </div>
+                    `;
+                    feed.appendChild(div);
+                    if (!hasVoted) {
+                        document.getElementById(`up-btn-${id}`).addEventListener('click', () => handleVote(id, 'up'));
+                        document.getElementById(`down-btn-${id}`).addEventListener('click', () => handleVote(id, 'down'));
+                    }
+                });
+            } catch (e) {
+                document.getElementById('feed').innerText = "The grove is currently resting. Please refresh.";
+            }
+        }
+
+        window.openLightbox = async (id) => {
+            activeThoughtId = id;
+            const lightbox = document.getElementById('lightbox');
+            const list = document.getElementById('response-list');
+            
+            lightbox.classList.add('show'); 
+            list.innerHTML = "Loading..."; 
+            
+            try {
+                const q = query(
+                    collection(db, "thoughts"), 
+                    where("thoughtId", "==", id),
+                    where("type", "==", "comment"),
+                    orderBy("timestamp", "desc")
+                );
+                const snap = await getDocs(q);
+                
+                list.innerHTML = snap.empty ? "<p style='font-size: 0.8rem; color: #555;'>No reflections yet.</p>" : "";
+                
+                snap.forEach(d => {
+                    list.innerHTML += `<div style="margin-bottom: 0.8rem; color: #888; font-size: 0.9rem;">— ${d.data().text}</div>`;
+                });
+            } catch (e) {
+                list.innerHTML = `<p style="color: #ff5252; font-size: 0.8rem;">ERROR: ${e.message}</p>`;
+            }
+        };
+
+        window.closeLightbox = () => { 
+            document.getElementById('lightbox').classList.remove('show'); 
+            document.getElementById('lightbox-input').value = ""; 
+        };
+
+        window.submitLightboxReply = async () => {
+            const input = document.getElementById('lightbox-input');
+            if(!input.value) return;
+            try {
+                await addDoc(collection(db, "thoughts"), { 
+                    thoughtId: activeThoughtId, 
+                    text: input.value, 
+                    timestamp: serverTimestamp(),
+                    type: "comment" 
+                });
+                showToast("Reflection added.");
+                closeLightbox();
+                window.openLightbox(activeThoughtId);
+            } catch(e) { showToast("Could not add reflection."); }
+        };
+
+        window.handleVote = async (id, type) => {
+            const countElement = document.getElementById(`count-${type}-${id}`);
+            const upBtn = document.getElementById(`up-btn-${id}`);
+            const downBtn = document.getElementById(`down-btn-${id}`);
+            
+            let currentVal = parseInt(countElement.innerText);
+            countElement.innerText = currentVal + 1;
+            upBtn.disabled = true; downBtn.disabled = true;
+            localStorage.setItem(`voted_${id}`, 'true');
+
+            try {
+                // Atomic update on the document itself
+                const fieldToUpdate = type === 'up' ? 'votesUp' : 'votesDown';
+                const updatePayload = {};
+                updatePayload[fieldToUpdate] = increment(1);
+                
+                await updateDoc(doc(db, "thoughts", id), updatePayload);
+            } catch (e) {
+                countElement.innerText = currentVal;
+                upBtn.disabled = false; downBtn.disabled = false;
+                showToast("Could not cast vote.");
+            }
+        };
+
+        loadHarvest();
+    </script>
+</body>
+</html>
