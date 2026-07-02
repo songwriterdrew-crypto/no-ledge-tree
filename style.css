@@ -102,4 +102,3 @@ textarea {
 textarea:focus { border-bottom: 1px solid #888; }
 .lightbox-close { margin-top: 3rem; cursor: pointer; color: #555; font-size: 0.5rem; letter-spacing: 0.2rem; text-transform: uppercase; transition: var(--transition); }
 .lightbox-close:hover { color: var(--text); }
-
