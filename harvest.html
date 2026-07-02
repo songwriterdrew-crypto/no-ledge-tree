@@ -110,7 +110,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let activeThoughtId = null;
+        let activethoughtId = null;
 
         window.showToast = (msg) => {
             const toast = document.getElementById('toast');
@@ -167,7 +167,7 @@
         };
 
         window.openLightbox = async (id, mode) => {
-            activeThoughtId = id;
+            activethoughtId = id;
             const lightbox = document.getElementById('lightbox');
             document.getElementById('modal-title').innerText = mode === 'Challenge' ? 'Offer a counterpoint?' : 'Your Reflection';
             lightbox.classList.add('show'); 
@@ -183,11 +183,11 @@
                 const batch = writeBatch(db);
                 const ref = doc(collection(db, "reflections"));
                 batch.set(ref, { 
-                    thoughtId: activeThoughtId, 
+                    thoughtId: activethoughtId, 
                     text: input.value, 
                     timestamp: serverTimestamp() 
                 });
-                batch.update(doc(db, "thoughts", activeThoughtId), { 
+                batch.update(doc(db, "thoughts", activethoughtId), { 
                     reflectionCount: increment(1) 
                 });
                 
