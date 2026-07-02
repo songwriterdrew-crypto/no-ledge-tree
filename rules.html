@@ -2,50 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="Favicon.png">
   <title>Rules | No-Ledge Tree</title>
   <style>
     :root {
-        --bg: #0a0a0a;
-        --card: #141414;
-        --accent: #81c784;
-        --text: #f0f0f0;
-        --text-muted: #888;
-        --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        --bg: #030303;
+        --card: #050505;
+        --accent: #00ff00; 
+        --accent-alt: #ff0000; 
+        --text: #e0e0e0;
+        --text-muted: #555;
+        --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    
     body { 
         background: var(--bg);
         color: var(--text); 
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif; 
+        font-family: "EB Garamond", serif; 
         padding: 4rem 2rem; 
         margin: 0; 
         min-height: 100vh;
-        animation: fadeIn 1.2s ease-in;
         display: flex; flex-direction: column; align-items: center;
     }
 
-    .container { max-width: 600px; text-align: left; }
+    .container { max-width: 500px; text-align: left; }
     
     h1 { 
-        font-size: 1.5rem; font-weight: 300; color: var(--text); 
-        margin-bottom: 4rem; text-align: center; text-transform: uppercase; letter-spacing: 0.2rem;
+        font-size: 1.2rem; font-weight: 300; color: var(--text); 
+        margin-bottom: 4rem; text-align: center; text-transform: uppercase; letter-spacing: 0.6rem;
     }
     
     h2 { 
-        font-size: 0.8rem; color: var(--accent); margin-top: 3rem; 
-        border-left: 2px solid var(--accent); padding-left: 1rem; 
-        text-transform: uppercase; letter-spacing: 0.1rem;
+        font-size: 0.6rem; color: var(--text); margin-top: 3rem; 
+        text-transform: uppercase; letter-spacing: 0.3rem; font-weight: 400;
     }
     
-    p { line-height: 1.8; color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 300; }
+    p { line-height: 1.8; color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1rem; }
     
+    strong { color: var(--text); font-weight: 400; }
+
     nav { margin-top: 4rem; text-align: center; }
     nav a { 
-        color: var(--text-muted); text-decoration: none; font-size: 0.75rem; 
-        text-transform: uppercase; letter-spacing: 0.1rem; transition: var(--transition); 
+        color: var(--text-muted); text-decoration: none; font-size: 0.5rem; 
+        text-transform: uppercase; letter-spacing: 0.3rem; transition: var(--transition); 
     }
     nav a:hover { color: var(--accent); }
   </style>
@@ -53,7 +56,7 @@
 <body>
 
   <div class="container">
-    <h1>The Agreements of the Grove</h1>
+    <h1>Agreements</h1>
     
     <p>The No-Ledge Tree is a space for shedding. To maintain the clarity of this sanctuary, we operate under these silent agreements:</p>
 
