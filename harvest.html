@@ -6,63 +6,62 @@
     <title>Harvest | No-Ledge Tree</title>
     <style>
         :root {
-            --bg: #050505;
-            --card: #0a0a0a;
-            --text-main: #e0e0e0;
-            --text-muted: #666;
-            --accent: #fff;
-            --seed-green: #81c784;
-            --transition: all 0.3s ease;
+            --bg: #030303; 
+            --card: #080808; 
+            --text-main: #f0f0f0; 
+            --text-muted: #555; 
+            --accent: #fff; 
+            --seed-green: #689f68;
+            --echo-blue: #5b8fb9;
+            --dissolve-red: #b95b5b;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body { 
             background: var(--bg); color: var(--text-main); 
             font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
-            margin: 0; padding: 4rem 1.5rem; 
+            margin: 0; padding: 6rem 1.5rem; 
             display: flex; flex-direction: column; align-items: center; 
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container { max-width: 480px; width: 100%; }
+        .container { max-width: 440px; width: 100%; }
         
-        h1 { font-weight: 300; font-size: 2.2rem; letter-spacing: 0.5rem; color: var(--accent); margin-bottom: 0.2rem; text-align: center; text-transform: uppercase; }
-        .subtitle { font-size: 0.6rem; color: var(--seed-green); letter-spacing: 0.3rem; margin-bottom: 4rem; text-align: center; text-transform: uppercase; }
+        h1 { font-weight: 200; font-size: 2rem; letter-spacing: 0.8rem; color: var(--accent); margin-bottom: 0.5rem; text-align: center; text-transform: uppercase; }
+        .subtitle { font-size: 0.55rem; color: var(--seed-green); letter-spacing: 0.4rem; margin-bottom: 5rem; text-align: center; text-transform: uppercase; opacity: 0.7; }
 
-        .thought-card { padding: 2rem 0; border-bottom: 1px solid #111; }
+        .thought-card { padding: 3rem 0; border-bottom: 1px solid #111; }
         
-        .seed-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1.2rem; }
-        .seed-dot { width: 6px; height: 6px; background: var(--seed-green); border-radius: 50%; }
-        .seed-count-text { font-size: 0.65rem; color: var(--seed-green); letter-spacing: 0.1rem; text-transform: uppercase; opacity: 0.8; }
+        .seed-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+        .seed-dot { width: 4px; height: 4px; background: var(--seed-green); border-radius: 50%; box-shadow: 0 0 8px var(--seed-green); }
+        .seed-count-text { font-size: 0.6rem; color: var(--seed-green); letter-spacing: 0.2rem; text-transform: uppercase; }
 
-        .text { font-size: 1.15rem; line-height: 1.5; margin-bottom: 1.5rem; letter-spacing: -0.01em; }
+        .text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 2rem; letter-spacing: -0.01em; font-weight: 300; }
         
-        .action-row { display: flex; gap: 1.5rem; align-items: center; }
-        .btn { background: transparent; border: none; color: var(--text-muted); padding: 0; cursor: pointer; transition: var(--transition); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05rem; }
+        .action-row { display: flex; gap: 2rem; align-items: center; }
+        .btn { background: transparent; border: none; color: var(--text-muted); padding: 0; cursor: pointer; transition: all 0.4s var(--ease); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15rem; }
         .btn:hover { color: var(--accent); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
         
-        /* Specific View Seed Button */
-        .btn-view { border: 1px solid var(--seed-green); color: var(--seed-green); padding: 4px 8px; border-radius: 4px; }
-        .btn-view:hover { background: var(--seed-green); color: var(--bg); }
+        .btn-view { border: 1px solid #222; color: var(--text-main); padding: 6px 12px; border-radius: 2px; }
+        .btn-view:hover { border-color: var(--seed-green); color: var(--seed-green); }
         
-        /* Constrained Accordion */
-        .accordion { 
-            display: none; padding-top: 1.5rem; margin-top: 1rem; border-top: 1px solid #1a1a1a; 
-            max-height: 400px; overflow-y: auto; 
-        }
+        .accordion { display: none; padding-top: 2rem; margin-top: 1rem; border-top: 1px solid #111; animation: fadeIn 0.4s var(--ease); }
         .accordion.open { display: block; }
         
-        .echo-item { padding: 12px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem; }
-        .echo-reflection { background: #0c0f14; border-left: 2px solid #2d3748; color: #a0aec0; }
-        .echo-challenge { background: #140c0c; border-left: 2px solid #742a2a; color: #fc8181; }
+        .echo-item { padding: 16px; margin-bottom: 10px; font-size: 0.8rem; line-height: 1.4; border-left: 1px solid #333; background: #0c0c0c; }
+        .echo-reflection { border-left-color: var(--echo-blue); color: var(--echo-blue); }
+        .echo-challenge { border-left-color: var(--dissolve-red); color: var(--dissolve-red); }
 
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #111; padding: 0.6rem 1.2rem; color: #fff; font-size: 0.7rem; opacity: 0; pointer-events: none; transition: var(--transition); border-radius: 4px; border: 1px solid #222; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #111; padding: 0.8rem 1.5rem; color: #fff; font-size: 0.65rem; opacity: 0; pointer-events: none; transition: 0.5s var(--ease); border: 1px solid #222; letter-spacing: 0.1rem; text-transform: uppercase; }
         #toast.show { opacity: 1; }
+        
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); z-index: 100; justify-content: center; align-items: center; }
         .lightbox.show { display: flex; }
-        .lightbox-content { background: #0a0a0a; border: 1px solid #222; padding: 2.5rem; width: 80%; max-width: 350px; border-radius: 8px; }
+        .lightbox-content { background: #080808; border: 1px solid #222; padding: 2.5rem; width: 80%; max-width: 350px; border-radius: 2px; }
         .lightbox-content input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; padding: 0.5rem 0; font-size: 1rem; outline: none; margin-bottom: 1rem; }
-        .lightbox-close { cursor: pointer; color: var(--text-muted); font-size: 0.7rem; margin-top: 1rem; text-align: center; }
-        
-        nav a { color: var(--text-muted); text-decoration: none; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1rem; }
     </style>
 </head>
 <body>
@@ -71,21 +70,21 @@
         <h1>HARVEST</h1>
         <p class="subtitle">The Grove</p>
         <div id="feed">Cultivating...</div>
-        <nav><a href="index.html">← Return</a></nav>
+        <nav style="margin-top: 4rem;"><a href="index.html" style="color:var(--text-muted); text-decoration:none; font-size:0.6rem; letter-spacing:0.2rem; text-transform:uppercase;">← Return</a></nav>
     </div>
 
     <div class="lightbox" id="lightbox">
         <div class="lightbox-content">
             <h2 id="modal-title" style="font-size: 0.7rem; color: #666; margin-bottom: 2rem; letter-spacing: 0.1rem; text-transform: uppercase;">Action</h2>
             <input type="text" id="lightbox-input" maxlength="120" placeholder="...">
-            <button class="btn" style="width: 100%; color: #fff; padding: 0.5rem; border: 1px solid #333;" onclick="submitLightboxReply()">Sow</button>
-            <div class="lightbox-close" onclick="closeLightbox()">Close</div>
+            <button id="sow-btn" class="btn" style="width: 100%; color: #fff; padding: 0.5rem; border: 1px solid #333;" onclick="submitLightboxReply()">Sow</button>
+            <div class="btn" style="margin-top: 1rem; text-align: center; width: 100%; cursor: pointer;" onclick="closeLightbox()">Close</div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, where, doc, writeBatch, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, where, doc, writeBatch, increment, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCNtb9aKUOLjJXH59mDnD6IQMYIxpAT3ss", authDomain: "no-ledge-tree.firebaseapp.com", projectId: "no-ledge-tree", storageBucket: "no-ledge-tree.firebasestorage.app", messagingSenderId: "633687715329", appId: "1:633687715329:web:c18aa11ccb64b7d43fda00" };
         const app = initializeApp(firebaseConfig);
@@ -102,7 +101,7 @@
 
         async function loadHarvest() {
             try {
-                const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"));
+                const q = query(collection(db, "thoughts"), orderBy("timestamp", "desc"), limit(10));
                 const snap = await getDocs(q);
                 const feed = document.getElementById('feed');
                 feed.innerHTML = "";
@@ -117,7 +116,7 @@
                     div.innerHTML = `
                         <div class="seed-header">
                             <div class="seed-dot"></div>
-                            <span class="seed-count-text">${seedCount} ${seedCount === 1 ? 'seed' : 'seeds'}</span>
+                            <span class="seed-count-text" id="count-${id}">${seedCount} ${seedCount === 1 ? 'seed' : 'seeds'}</span>
                         </div>
                         <div class="text">${data.thought}</div>
                         <div class="action-row">
@@ -136,8 +135,9 @@
             const acc = document.getElementById(`acc-${id}`);
             if (acc.classList.contains('open')) { acc.classList.remove('open'); return; }
             acc.classList.add('open');
-            acc.innerHTML = "<div style='color:#333; font-size:0.7rem;'>Loading...</div>";
+            if (acc.innerHTML !== "") return; 
             
+            acc.innerHTML = "<div style='color:#333; font-size:0.7rem;'>Loading...</div>";
             const q = query(collection(db, "reflections"), where("thoughtId", "==", id), orderBy("timestamp", "desc"));
             const snap = await getDocs(q);
             
@@ -145,24 +145,14 @@
             snap.forEach(d => {
                 const data = d.data();
                 const type = data.type || 'reflection';
-                acc.innerHTML += `<div class="echo-item ${type === 'challenge' ? 'echo-challenge' : 'echo-reflection'}">${data.text}</div>`;
+                const colorClass = type === 'challenge' ? 'echo-challenge' : 'echo-reflection';
+                acc.innerHTML += `<div class="echo-item ${colorClass}">${data.text}</div>`;
             });
         };
 
         window.openLightbox = (id, mode) => {
-            activethoughtId = id; 
-            activeMode = mode;
-            const titleEl = document.getElementById('modal-title');
-            const inputEl = document.getElementById('lightbox-input');
-            
-            if (mode === 'Echo') {
-                titleEl.innerText = "Hold a Mirror";
-                inputEl.placeholder = "What is the core assumption?";
-            } else {
-                titleEl.innerText = "Dissolve the Ledge";
-                inputEl.placeholder = "Ask a question that reveals...";
-            }
-            
+            activethoughtId = id; activeMode = mode;
+            document.getElementById('modal-title').innerText = mode === 'Echo' ? "Hold a Mirror" : "Dissolve the Ledge";
             document.getElementById('lightbox').classList.add('show'); 
         };
 
@@ -170,7 +160,26 @@
 
         window.submitLightboxReply = async () => {
             const input = document.getElementById('lightbox-input');
+            const submitBtn = document.getElementById('sow-btn');
+            
             if(!input.value) return;
+
+            // Prevent double-clicks
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Sowing...";
+            
+            const countEl = document.getElementById(`count-${activethoughtId}`);
+            let current = parseInt(countEl.innerText);
+            countEl.innerText = `${current + 1} ${current + 1 === 1 ? 'seed' : 'seeds'}`;
+
+            const acc = document.getElementById(`acc-${activethoughtId}`);
+            if(acc.classList.contains('open')) {
+                const item = document.createElement('div');
+                item.className = `echo-item ${activeMode === 'Dissolve' ? 'echo-challenge' : 'echo-reflection'}`;
+                item.innerText = input.value;
+                acc.prepend(item);
+            }
+
             try {
                 const batch = writeBatch(db);
                 const ref = doc(collection(db, "reflections"));
@@ -179,9 +188,17 @@
                     timestamp: serverTimestamp(), type: activeMode === 'Dissolve' ? 'challenge' : 'reflection'
                 });
                 batch.update(doc(db, "thoughts", activethoughtId), { reflectionCount: increment(1) });
-                batch.commit();
-                showToast("Sown."); input.value = ""; closeLightbox(); loadHarvest();
-            } catch(e) { showToast("Error."); }
+                await batch.commit();
+                showToast("Sown."); 
+                input.value = ""; 
+                closeLightbox();
+            } catch(e) { 
+                showToast("Error. Syncing..."); 
+                loadHarvest(); 
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Sow";
+            }
         };
 
         loadHarvest();
