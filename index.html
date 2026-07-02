@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>No-Ledge Tree</title>
-  <link rel="icon" type="image/png" href="1782936698284.png">
   <style>
     :root {
         --bg: #0a0a0a;
@@ -116,12 +115,13 @@
   <div class="tagline">A SPACE FOR UNLEARNING</div>
   
   <div id="prompt-display">Loading reflection...</div>
-  <input type="text" id="seed-input" placeholder="Plant a thought...">
+  <!-- Updated placeholder -->
+  <input type="text" id="seed-input" placeholder="What are you unlearning?">
   <br>
-  <button id="plant-btn">Plant Seed</button>
+  <!-- Updated button text -->
+  <button id="plant-btn">Sow</button>
   
-  <!-- Updated this line -->
-  <p id="grove-status"><a href="harvest.html">Cultivating the grove...</a></p>
+  <p id="grove-status"><a href="harvest.html">The Grove of Unlearning</a></p>
 
   <nav>
     <a href="about.html">About</a> 
@@ -182,8 +182,8 @@
         try {
             const snap = await getCountFromServer(collection(db, "thoughts"));
             const count = snap.data().count;
-            // Update the text inside the link
-            document.getElementById('grove-status').innerHTML = `<a href="harvest.html">The grove is currently holding ${count} seeds.</a>`;
+            // Refined status text
+            document.getElementById('grove-status').innerHTML = `<a href="harvest.html">The Grove holds ${count} seeds.</a>`;
         } catch (e) { console.error("Error updating status:", e); }
     }
 
@@ -233,8 +233,8 @@
         document.getElementById('seed-input').value = "";
         growFruit();
         updateStatus();
-        showToast("Thought planted.");
-      } catch (e) { showToast("Unable to plant."); }
+        showToast("Seed sown."); // Updated toast message
+      } catch (e) { showToast("Unable to sow."); }
     });
 
     growFruit();
@@ -242,3 +242,4 @@
   </script>
 </body>
 </html>
+
