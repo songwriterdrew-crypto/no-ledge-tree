@@ -52,6 +52,11 @@
         }
         .btn:hover { border-color: var(--accent); color: var(--accent); }
         
+        /* Accordion Styling */
+        .accordion { display: none; padding-top: 1.5rem; color: #888; font-size: 0.9rem; border-top: 1px solid #222; margin-top: 1.5rem; }
+        .accordion.open { display: block; }
+        .echo-item { margin-bottom: 0.8rem; line-height: 1.4; }
+
         .lightbox { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 100; 
@@ -91,7 +96,6 @@
     <div class="lightbox" id="lightbox">
         <div class="lightbox-content">
             <h2 id="modal-title">Your Reflection</h2>
-            <div id="response-list" style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;"></div>
             <input type="text" id="lightbox-input" maxlength="120" placeholder="Write your thought...">
             <button class="btn" style="width: 100%; margin-top: 1rem; border-color: var(--accent); color: var(--accent);" onclick="submitLightboxReply()">Sow Seed</button>
             <div class="lightbox-close" style="text-align: center;" onclick="closeLightbox()">Close</div>
@@ -132,28 +136,41 @@
                         <div class="text">${data.thought}</div>
                         <div class="action-row">
                             <span class="seed-count">Seeds: ${seedCount}</span>
+                            <button class="btn" onclick="toggleAccordion('${id}')">View</button>
                             <button class="btn" onclick="openLightbox('${id}', 'Reflect')">Reflect</button>
-                            <button class="btn" onclick="openLightbox('${id}', 'Dissent')">Dissent</button>
+                            <button class="btn" onclick="openLightbox('${id}', 'Challenge')">Challenge</button>
                         </div>
+                        <div id="acc-${id}" class="accordion">Loading echoes...</div>
                     `;
                     feed.appendChild(div);
                 });
             } catch (e) { feed.innerText = "The grove is currently resting."; }
         }
 
-        window.openLightbox = async (id, mode) => {
-            activeThoughtId = id;
-            const lightbox = document.getElementById('lightbox');
-            const list = document.getElementById('response-list');
-            document.getElementById('modal-title').innerText = mode === 'Dissent' ? 'Why does this fail?' : 'Your Reflection';
-            
-            lightbox.classList.add('show'); 
-            list.innerHTML = "Loading echoes..."; 
+        window.toggleAccordion = async (id) => {
+            const acc = document.getElementById(`acc-${id}`);
+            if (acc.classList.contains('open')) {
+                acc.classList.remove('open');
+                return;
+            }
+            acc.classList.add('open');
             
             const q = query(collection(db, "reflections"), where("thoughtId", "==", id), orderBy("timestamp", "desc"));
             const snap = await getDocs(q);
-            list.innerHTML = snap.empty ? "<p style='font-size: 0.8rem; color: #555;'>No seeds sown yet.</p>" : "";
-            snap.forEach(d => list.innerHTML += `<div style="margin-bottom: 0.8rem; color: #888; font-size: 0.9rem;">— ${d.data().text}</div>`);
+            
+            if (snap.empty) {
+                acc.innerHTML = "<p>No seeds sown yet.</p>";
+            } else {
+                acc.innerHTML = "";
+                snap.forEach(d => acc.innerHTML += `<div class="echo-item">— ${d.data().text}</div>`);
+            }
+        };
+
+        window.openLightbox = async (id, mode) => {
+            activeThoughtId = id;
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('modal-title').innerText = mode === 'Challenge' ? 'Offer a counterpoint?' : 'Your Reflection';
+            lightbox.classList.add('show'); 
         };
 
         window.closeLightbox = () => { document.getElementById('lightbox').classList.remove('show'); };
@@ -164,20 +181,19 @@
             
             try {
                 const batch = writeBatch(db);
-                // 1. Add the reflection
                 const ref = doc(collection(db, "reflections"));
                 batch.set(ref, { 
                     thoughtId: activeThoughtId, 
                     text: input.value, 
                     timestamp: serverTimestamp() 
                 });
-                // 2. Increment seed count
                 batch.update(doc(db, "thoughts", activeThoughtId), { 
                     reflectionCount: increment(1) 
                 });
                 
                 await batch.commit();
                 showToast("Seed sown.");
+                input.value = ""; // Clear input
                 closeLightbox();
                 loadHarvest();
             } catch(e) { showToast("Could not sow seed."); }
